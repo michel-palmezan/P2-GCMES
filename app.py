@@ -1,15 +1,14 @@
-import psycopg2
-from psycopg2 import sql, Error
+from psycopg2 import Error, connect
 from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 from os import getenv
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='./docs')
 load_dotenv()
 
 def get_db_connection():
     try:
-        conn = psycopg2.connect(
+        conn = connect(
             dbname=getenv("DB_NAME"),
             user=getenv("USER"),
             password=getenv("PSSWD"),
@@ -356,7 +355,7 @@ def inserir():
 
             conn.commit()
         
-        except (Exception, psycopg2.Error) as error:
+        except (Exception, Error) as error:
             conn.rollback()
             message = f"Houve um problema com os inputs: inputs inválidos!"
             print(error)

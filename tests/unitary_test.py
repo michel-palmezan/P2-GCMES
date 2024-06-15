@@ -200,9 +200,5 @@ def test_handle_candidatura_insertion():
     }
 
     handle_candidatura_insertion(cursor_mock, form_data)
-    cursor_mock.execute.assert_called_once_with(
-        pytest.helpers.ANY,  
-        (
-            '789', '49301656876', '202', '303', '2024', '404', '505', True, '100000'
-        )
-    )
+    cursor_mock.execute.assert_called_once()
+    

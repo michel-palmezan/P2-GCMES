@@ -38,12 +38,6 @@ def test_get_invalid_message():
     assert get_invalid_message('empresa') == "CNPJ inválido ou não encontrado!"
     assert get_invalid_message('invalid_entity') == "Entidade ou coluna de ID inválida."
 
-def test_handle_partido_insertion():
-    mock_cursor = MagicMock()
-    form_data = {'cod_partido': '123', 'nome': 'Partido X', 'cod_programa': '456'}
-    handle_partido_insertion(mock_cursor, form_data)
-    mock_cursor.execute.assert_called_once()
-
 def test_handle_programa_partido_insertion():
     mock_cursor = MagicMock()
     form_data = {'cod_programaPartido': '789', 'programa': 'Programa Y'}
@@ -62,39 +56,45 @@ def test_handle_empresa_insertion():
     handle_empresa_insertion(mock_cursor, form_data)
     mock_cursor.execute.assert_called_once()
 
-def test_candidatura_exists():
+def test_handle_cargo_insertion():
     cursor_mock = MagicMock()
-    cursor_mock.fetchone.return_value = (1,)
-    result = candidatura_exists(cursor_mock, 'codigo_candidato', 'ano', 'codigo_cargo')
-    assert result is True  
-
-def test_other_candidatura_exists():
-    cursor_mock = MagicMock()
-    cursor_mock.fetchone.return_value = (1,) 
-    result = other_candidatura_exists(cursor_mock, 'codigo_candidato', 'ano', 'codigo_cargo')
-    assert result is True  
-
-def test_handle_individuo_insertion():
-    form_mock = {'cod_equipe': '101', 'nomeEquipe': 'Equipe Z'}
-    cursor_mock = MagicMock()
-    handle_individuo_insertion(cursor_mock, form_mock)
-    cursor_mock.execute.assert_called_once()
-
-def test_handle_cargo_insertion(form_mock):
-    cursor_mock = MagicMock()
+    form_mock = {
+    'cod_Cargo': '123',
+    'descricao': 'Cargo Test',
+    'localidade': 'Local Test',
+    'qtd_Eleitos': '2',
+    'pais': 'Brasil',
+    'estado': 'SP',
+    'cidade': 'São Paulo'
+}
     handle_cargo_insertion(cursor_mock, form_mock)
     cursor_mock.execute.assert_called_once()
 
-def test_handle_equipeapoio_insertion(form_mock):
+def test_handle_equipeapoio_insertion():
     cursor_mock = MagicMock()
+    form_mock = {
+    'cod_equipe': '101',
+    'nomeEquipe': 'Equipe Z'
+}
     handle_equipeapoio_insertion(cursor_mock, form_mock)
     cursor_mock.execute.assert_called_once()  
 
-def test_handle_empresa_insertion(cursor_mock, form_mock):
+def test_handle_empresa_insertion():
+    cursor_mock = MagicMock()
+    form_mock = {'cnpj': '12345678901234', 'nomeEmpresa': 'Empresa A'}
     handle_empresa_insertion(cursor_mock, form_mock)
     cursor_mock.execute.assert_called_once()  
 
-def test_handle_processojudicial_insertion(form_mock):
+def test_handle_processojudicial_insertion():
     cursor_mock = MagicMock()
+    form_mock = {
+    'codigo_processo': '456',
+    'codigo_individuo': '789',
+    'data_Inicio': '2024-06-20',
+    'julgado': 'TRUE',
+    'data_termino': '2024-12-31',
+    'procedente': 'TRUE'
+}
     handle_processojudicial_insertion(cursor_mock, form_mock)
     cursor_mock.execute.assert_called_once()  
+

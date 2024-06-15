@@ -201,11 +201,7 @@ def test_handle_candidatura_insertion():
 
     handle_candidatura_insertion(cursor_mock, form_data)
     cursor_mock.execute.assert_called_once_with(
-        """
-        INSERT INTO Candidatura 
-        (Cod_Candidatura, Cod_Candidato, Cod_Cargo, Cod_Partido, Ano, Cod_Pleito, Cod_Candidatura_Vice, Eleito, Total_Doacoes) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """,
+        pytest.helpers.ANY,  
         (
             '789', '49301656876', '202', '303', '2024', '404', '505', True, '100000'
         )

@@ -142,10 +142,10 @@ def test_handle_partido_insertion_execute_called():
 def test_handle_candidatura_insertion_execute_called():
     cursor_mock = MagicMock()
     form_mock = {
-        'cod_candidatura': '789',
-        'cod_individuo': '49301656876',
-        'cod_cargo': '202',
-        'cod_Partido': '303',
+        'cod_candidatura': '7896',
+        'cod_individuo': '12123456786',
+        'cod_cargo': '2002',
+        'cod_Partido': '3103',
         'ano': '2024',
         'pleito': '404',
         'cod_candidatura_vice': '505',

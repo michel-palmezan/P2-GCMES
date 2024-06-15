@@ -98,3 +98,33 @@ def test_handle_processojudicial_insertion():
     handle_processojudicial_insertion(cursor_mock, form_mock)
     cursor_mock.execute.assert_called_once()  
 
+def test_is_valid_entity_invalid_length():
+    assert is_valid_entity('empresa', '123') == False
+    assert is_valid_entity('empresa', '123456789012345678') == False
+
+def test_handle_cargo_insertion_execute_called():
+    cursor_mock = MagicMock()
+    form_mock = {
+        'cod_Cargo': '123',
+        'descricao': 'Cargo Test',
+        'localidade': 'Local Test',
+        'qtd_Eleitos': '2',
+        'pais': 'Brasil',
+        'estado': 'SP',
+        'cidade': 'São Paulo'
+    }
+    handle_cargo_insertion(cursor_mock, form_mock)
+    cursor_mock.execute.assert_called_once()
+
+def test_handle_processojudicial_insertion_execute_called():
+    cursor_mock = MagicMock()
+    form_mock = {
+        'codigo_processo': '456',
+        'codigo_individuo': '789',
+        'data_Inicio': '2024-06-20',
+        'julgado': 'TRUE',
+        'data_termino': '2024-12-31',
+        'procedente': 'TRUE'
+    }
+    handle_processojudicial_insertion(cursor_mock, form_mock)
+    cursor_mock.execute.assert_called_once()

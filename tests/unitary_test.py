@@ -21,7 +21,7 @@ def test_is_valid_entity():
 
 def test_is_valid_entity_invalid_length():
     assert is_valid_entity('empresa') == True
-    assert is_valid_id('empresa', '123456789012345678') == False
+    assert is_valid_id('empresa', '123456789012345678987897988') == False
 
 def test_is_valid_id():
     assert is_valid_id('individuo', '12345678901234') == True

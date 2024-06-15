@@ -151,3 +151,16 @@ def test_other_candidatura_exists_execute_called():
     result = other_candidatura_exists(cursor_mock, '101', '2024', '303')
     assert result is True
 
+def test_handle_individuo_insertion_execute_called():
+    cursor_mock = MagicMock()
+    form_mock = {
+        'cpf': '12345678900',
+        'nome_ind': 'João da Silva',
+        'ficha_limpa': 'TRUE',
+        'partido': '101'
+    }
+    handle_individuo_insertion(cursor_mock, form_mock)
+    cursor_mock.execute.assert_called_once_with(
+        "INSERT INTO Individuo (CPF, Nome, Ficha_Limpa, Cod_Equipe) VALUES (%s, %s, %s, %s)",
+        ('12345678900', 'João da Silva', 'TRUE', '101')
+    )

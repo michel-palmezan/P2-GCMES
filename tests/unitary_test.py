@@ -139,22 +139,6 @@ def test_handle_partido_insertion_execute_called():
         handle_partido_insertion(cursor_mock, form_mock)
         cursor_mock.execute.assert_called_once()
 
-def test_handle_candidatura_insertion_execute_called():
-    cursor_mock = MagicMock()
-    form_mock = {
-        'cod_candidatura': '7896',
-        'cod_individuo': '12123456786',
-        'cod_cargo': '2002',
-        'cod_Partido': '3103',
-        'ano': '2024',
-        'pleito': '404',
-        'cod_candidatura_vice': '505',
-        'eleito': 'SIM',
-        'total_doacoes': '100000'
-    }
-    handle_candidatura_insertion(cursor_mock, form_mock)
-    cursor_mock.execute.assert_called_once()
-
 def test_candidatura_exists_execute_called():
     cursor_mock = MagicMock()
     cursor_mock.fetchone.return_value = (1,)

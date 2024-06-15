@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from os import getenv
 from static.misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_and_column, delete_from_db
 
+message = "Dados inseridos com sucesso!"
+
 app = Flask(__name__, template_folder='./docs')
 load_dotenv()
 
@@ -26,7 +28,6 @@ def get_db_connection():
 def index():
     return render_template('index.html')
 
-# Rota para obter candidatos eleitos
 @app.route('/candidaturas/eleitos', methods=['GET'])
 def get_eleitos():
     query = """
@@ -182,7 +183,6 @@ def inserir():
         entity = request.form['entity']
         conn = get_db_connection()
         cursor = conn.cursor()
-        message = "Dados inseridos com sucesso!"
         
         try:
             if entity == 'pleito':
@@ -365,7 +365,6 @@ def doacoes():
                     cursor.execute(query_insert_doacaopf, (nf_doacao, cod_doador, valor, data_doacao))
                 
                 conn.commit()
-                message = "Dados inseridos com sucesso!"
             elif doador_tipo == "Jurídico":
                 cod_doador = request.form['cod_doador_pj']
                 cod_candidatura = request.form['cod_candidatura_pj']
@@ -374,7 +373,6 @@ def doacoes():
                 query = "INSERT INTO DoadorPJ (Cod_Empresa, Cod_Candidatura, Valor, data_doacao) VALUES (%s, %s, %s, %s)"
                 cursor.execute(query, (cod_doador, cod_candidatura, valor, data_doacao))
                 conn.commit()
-                message = "Dados inseridos com sucesso!"
             else:
                 raise ValueError("Tipo de doador inválido.")
         

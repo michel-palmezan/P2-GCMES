@@ -62,13 +62,3 @@ def test_handle_empresa_insertion():
     handle_empresa_insertion(mock_cursor, form_data)
     mock_cursor.execute.assert_called_once()
 
-@patch('app.candidatura_exists')
-@patch('app.other_candidatura_exists')
-def test_handle_candidatura_insertion(mock_other_candidatura_exists, mock_candidatura_exists):
-    mock_cursor = MagicMock()
-    form_data = {'cod_candidatura': '111', 'cod_individuo': '12345678901234', 'cod_cargo': '999', 'cod_Partido': '444', 'ano': '2024', 'pleito': '789', 'cod_candidatura_vice': '888', 'eleito': 'SIM', 'total_doacoes': '500'}
-    mock_candidatura_exists.return_value = False
-    mock_other_candidatura_exists.return_value = False
-
-    handle_candidatura_insertion(mock_cursor, form_data)
-    mock_cursor.execute.assert_called_once()

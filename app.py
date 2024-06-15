@@ -26,7 +26,7 @@ def index():
     return render_template('index.html')
 
 # Rota para obter candidatos eleitos
-@app.route('/docs/candidaturas/eleitos', methods=['GET'])
+@app.route('/candidaturas/eleitos', methods=['GET'])
 def get_eleitos():
     query = """
     SELECT Candidatura.*, Individuo.Nome AS Nome, Partido.Nome AS Partido, Cargo.Localidade, Vice.Cod_Candidato AS Vice_Candidato

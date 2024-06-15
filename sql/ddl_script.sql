@@ -1,7 +1,3 @@
--- Gabriel Garcia Ferreira - 13677160
--- Aruan Bretas de Oliveira Filho - 12609731
--- Guilherme Henrique Galdini Tosi 11781587
--- Antonio Rodrigues Rigolino - 11795791
 CREATE TABLE Pleito (
     Cod_Pleito INTEGER PRIMARY KEY,
     Qtd_Votos INTEGER NOT NULL DEFAULT 0
@@ -152,7 +148,6 @@ FOR EACH ROW EXECUTE FUNCTION check_valid_candidatura();
 CREATE OR REPLACE FUNCTION atualizar_total_doacoes_pf() RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (SELECT 1 FROM DoacaoPF WHERE Cod_Nota = NEW.Cod_Nota) THEN
-        -- Atualiza apenas a tabela Candidatura se a nota já existir
         UPDATE Candidatura
         SET Total_Doacoes = Total_Doacoes + NEW.Valor
         WHERE Cod_Candidatura = (SELECT Cod_Candidatura FROM Candidatura WHERE Cod_Candidato = NEW.Cod_Individuo);
@@ -271,7 +266,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Criação do trigger
 CREATE TRIGGER check_unique_candidacy_per_year_trigger
 BEFORE INSERT ON Candidatura
 FOR EACH ROW

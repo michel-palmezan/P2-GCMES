@@ -26,7 +26,7 @@ def index():
     return render_template('index.html')
 
 # Rota para obter candidatos eleitos
-@app.route('/candidaturas/eleitos', methods=['GET'])
+@app.route('/docs/candidaturas/eleitos', methods=['GET'])
 def get_eleitos():
     query = """
     SELECT Candidatura.*, Individuo.Nome AS Nome, Partido.Nome AS Partido, Cargo.Localidade, Vice.Cod_Candidato AS Vice_Candidato
@@ -61,7 +61,7 @@ def get_eleitos():
         })
     return render_template('eleitos.html', candidaturas=result)
 
-@app.route('/candidaturas', methods=['GET'])
+@app.route('/docs/candidaturas', methods=['GET'])
 def list_candidaturas():
     try:
         conn = get_db_connection()
@@ -127,7 +127,7 @@ def list_candidaturas():
         return jsonify({'error': str(e)}), 500
 
 # Rota para obter candidatos com ficha limpa
-@app.route('/candidatos/ficha-limpa', methods=['GET'])
+@app.route('/docs/candidatos/ficha-limpa', methods=['GET'])
 def get_ficha_limpa():
     query = "SELECT * FROM Individuo WHERE Ficha_Limpa = TRUE"
     
@@ -221,7 +221,7 @@ def delete_entity():
 
     return render_template('delete.html')
 
-@app.route('/inserir', methods=['GET', 'POST'])
+@app.route('/docs/inserir', methods=['GET', 'POST'])
 def inserir():
     if request.method == 'POST':
         entity = request.form['entity']
@@ -368,7 +368,7 @@ def inserir():
     
     return render_template('inserir.html')
 
-@app.route('/doacoes', methods=['GET', 'POST'])
+@app.route('/docs/doacoes', methods=['GET', 'POST'])
 def doacoes():
     message = ""
     if request.method == 'POST':

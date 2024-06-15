@@ -1,3 +1,5 @@
+duplicate_error = 'Candidato já se candidatou para o mesmo cargo no mesmo ano.'
+
 ## REMOÇÕES
 
 def is_valid_entity(entity):
@@ -80,10 +82,10 @@ def handle_candidatura_insertion(cursor, form):
     total_doacoes = form['total_doacoes'] or 0
 
     if candidatura_exists(cursor, codigo_candidato, ano, codigo_cargo):
-        raise Exception('Candidato já se candidatou para o mesmo cargo no mesmo ano.')
+        raise Exception(duplicate_error)
     
     if other_candidatura_exists(cursor, codigo_candidato, ano, codigo_cargo):
-        raise Exception('Candidato já se candidatou para outro cargo no mesmo ano.')
+        raise Exception(duplicate_error)
 
     query = """
         INSERT INTO Candidatura 

@@ -21,7 +21,7 @@ def get_db_connection():
         return None
 
 # Rota principal
-@app.route('/')
+@app.route('/docs/')
 def index():
     return render_template('index.html')
 

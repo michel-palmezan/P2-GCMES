@@ -2,7 +2,27 @@ from psycopg2 import Error, connect
 from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 from os import getenv
-from static.misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_and_column, delete_from_db
+from static.misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_and_column
+
+def delete_from_db(table, id_column, id, entity):
+    query = f"DELETE FROM {table} WHERE {id_column} = %s"
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, (id,))
+        
+        if cursor.rowcount == 0:
+            message = f"Nenhum registro encontrado para {entity} com ID {id}."
+        else:
+            conn.commit()
+            message = f"{entity.capitalize()} com ID {id} removido com sucesso."
+    except Exception as e:
+        conn.rollback()
+        message = f"Erro ao remover {entity}: {e}"
+    finally:
+        cursor.close()
+        conn.close()
+    return message
 
 message = "Dados inseridos com sucesso!"
 

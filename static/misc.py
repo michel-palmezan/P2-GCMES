@@ -1,6 +1,3 @@
-
-from app import get_db_connection
-
 def is_valid_entity(entity):
     valid_entities = [
         'pleito', 'candidatura', 'cargo', 'individuo',
@@ -47,23 +44,3 @@ def get_table_and_column(entity):
         'empresa': 'cnpj'
     }
     return table_mapping.get(entity), id_column_mapping.get(entity)
-
-def delete_from_db(table, id_column, id, entity):
-    query = f"DELETE FROM {table} WHERE {id_column} = %s"
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute(query, (id,))
-        
-        if cursor.rowcount == 0:
-            message = f"Nenhum registro encontrado para {entity} com ID {id}."
-        else:
-            conn.commit()
-            message = f"{entity.capitalize()} com ID {id} removido com sucesso."
-    except Exception as e:
-        conn.rollback()
-        message = f"Erro ao remover {entity}: {e}"
-    finally:
-        cursor.close()
-        conn.close()
-    return message

@@ -2,8 +2,8 @@ from psycopg2 import Error, connect
 from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 from os import getenv
-from static.misc import handle_candidatura_insertion, handle_cargo_insertion, handle_empresa_insertion, handle_equipeapoio_insertion, handle_individuo_insertion, handle_partido_insertion, handle_pleito_insertion, handle_processojudicial_insertion, handle_programa_partido_insertion
-from static.misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_and_column
+from tests.misc import handle_candidatura_insertion, handle_cargo_insertion, handle_empresa_insertion, handle_equipeapoio_insertion, handle_individuo_insertion, handle_partido_insertion, handle_pleito_insertion, handle_processojudicial_insertion, handle_programa_partido_insertion
+from tests.misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_and_column
 
 def delete_from_db(table, id_column, entity_id, entity):
     query = f"DELETE FROM {table} WHERE {id_column} = %s"

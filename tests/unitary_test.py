@@ -1,10 +1,10 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 import pytest
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from app import app
-from misc_test import *
+from misc import *
 
 @pytest.fixture
 def client():
@@ -62,3 +62,32 @@ def test_handle_empresa_insertion():
     handle_empresa_insertion(mock_cursor, form_data)
     mock_cursor.execute.assert_called_once()
 
+def test_candidatura_exists(cursor_mock):
+    cursor_mock.fetchone.return_value = (1,)
+    result = candidatura_exists(cursor_mock, 'codigo_candidato', 'ano', 'codigo_cargo')
+    assert result is True  
+
+def test_other_candidatura_exists(cursor_mock):
+    cursor_mock.fetchone.return_value = (1,) 
+    result = other_candidatura_exists(cursor_mock, 'codigo_candidato', 'ano', 'codigo_cargo')
+    assert result is True  
+
+def test_handle_individuo_insertion(cursor_mock, form_mock):
+    handle_individuo_insertion(cursor_mock, form_mock)
+    cursor_mock.execute.assert_called_once()
+
+def test_handle_cargo_insertion(cursor_mock, form_mock):
+    handle_cargo_insertion(cursor_mock, form_mock)
+    cursor_mock.execute.assert_called_once()
+
+def test_handle_equipeapoio_insertion(cursor_mock, form_mock):
+    handle_equipeapoio_insertion(cursor_mock, form_mock)
+    cursor_mock.execute.assert_called_once()  
+
+def test_handle_empresa_insertion(cursor_mock, form_mock):
+    handle_empresa_insertion(cursor_mock, form_mock)
+    cursor_mock.execute.assert_called_once()  
+
+def test_handle_processojudicial_insertion(cursor_mock, form_mock):
+    handle_processojudicial_insertion(cursor_mock, form_mock)
+    cursor_mock.execute.assert_called_once()  

@@ -1,9 +1,9 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import pytest
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from app import app
+from app import app, delete_from_db
 from misc import *
 
 @pytest.fixture
@@ -33,7 +33,7 @@ def test_get_table_and_column():
 
 def test_handle_pleito_insertion():
     mock_cursor = MagicMock()
-    form_data = {'Cod_Pleito': '123', 'qtdVotos': '100'}
+    form_data = {'Cod_Pleito': '49301656876', 'qtdVotos': '100'}
     handle_pleito_insertion(mock_cursor, form_data)
     mock_cursor.execute.assert_called_once()
 
@@ -63,7 +63,7 @@ def test_handle_empresa_insertion():
 def test_handle_cargo_insertion():
     cursor_mock = MagicMock()
     form_mock = {
-    'cod_Cargo': '123',
+    'cod_Cargo': '49301656876',
     'descricao': 'Cargo Test',
     'localidade': 'Local Test',
     'qtd_Eleitos': '2',
@@ -105,7 +105,7 @@ def test_handle_processojudicial_insertion():
 def test_handle_cargo_insertion_execute_called():
     cursor_mock = MagicMock()
     form_mock = {
-        'cod_Cargo': '123',
+        'cod_Cargo': '49301656876',
         'descricao': 'Cargo Test',
         'localidade': 'Local Test',
         'qtd_Eleitos': '2',
@@ -132,7 +132,7 @@ def test_handle_processojudicial_insertion_execute_called():
 def test_handle_partido_insertion_execute_called():
         cursor_mock = MagicMock()
         form_mock = {
-            'cod_partido': '123',
+            'cod_partido': '49301656876',
             'nome': 'Partido X',
             'cod_programa': '456'
         }
@@ -164,3 +164,67 @@ def test_handle_individuo_insertion_execute_called():
         "INSERT INTO Individuo (CPF, Nome, Ficha_Limpa, Cod_Equipe) VALUES (%s, %s, %s, %s)",
         ('12345678900', 'João da Silva', 'TRUE', '101')
     )
+
+def test_delete_from_db():
+    conn_mock = MagicMock()
+    cursor_mock = MagicMock()
+    conn_mock.cursor.return_value = cursor_mock
+
+    cursor_mock.rowcount = 1
+
+    with patch('app.get_db_connection', return_value=conn_mock):
+        table = 'usuarios'
+        id_column = 'id'
+        entity_id = '49301656876'
+        entity = 'usuário'
+        
+        result = delete_from_db(table, id_column, entity_id, entity)
+
+        cursor_mock.execute.assert_called_once_with("DELETE FROM usuarios WHERE id = %s", ('49301656876',))
+
+        assert result == "Usuário com ID 123 removido com sucesso."
+
+def test_delete_from_db_no_record_found():
+    conn_mock = MagicMock()
+    cursor_mock = MagicMock()
+    conn_mock.cursor.return_value = cursor_mock
+
+    cursor_mock.rowcount = 0
+
+    with patch('app.get_db_connection', return_value=conn_mock):
+        table = 'usuarios'
+        id_column = 'id'
+        entity_id = '49301656876'
+        entity = 'individuo'
+
+        result = delete_from_db(table, id_column, entity_id, entity)
+
+        cursor_mock.execute.assert_called_once_with("DELETE FROM usuarios WHERE id = %s", ('49301656876',))
+
+        assert result == "Nenhum registro encontrado para usuário com ID 123."
+
+def test_handle_candidatura_insertion():
+    cursor_mock = MagicMock()
+
+    form_mock = {
+        'cod_candidatura': '49301656876',
+        'cod_individuo': '25477345732',
+        'cod_cargo': '789',
+        'cod_Partido': '101',
+        'ano': '2024',
+        'pleito': '303',
+        'cod_candidatura_vice': '404',
+        'eleito': 'SIM',
+        'total_doacoes': '100000'
+    }
+    candidatura_exists_mock = MagicMock(return_value=False)
+    other_candidatura_exists_mock = MagicMock(return_value=False)
+
+    with patch('app.candidatura_exists', candidatura_exists_mock), \
+         patch('app.other_candidatura_exists', other_candidatura_exists_mock):
+        
+        handle_candidatura_insertion(cursor_mock, form_mock)
+        cursor_mock.execute.assert_called_once()
+
+        candidatura_exists_mock.assert_called_once_with(cursor_mock, '456', '2024', '789')
+        other_candidatura_exists_mock.assert_called_once_with(cursor_mock, '456', '2024', '789')

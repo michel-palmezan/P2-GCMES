@@ -2,6 +2,7 @@ from psycopg2 import Error, connect
 from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 from os import getenv
+from static.misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_and_column, delete_from_db
 
 app = Flask(__name__, template_folder='./docs')
 load_dotenv()
@@ -159,66 +160,20 @@ def get_ficha_limpa():
 def delete_entity():
     if request.method == 'POST':
         entity = request.form['entity'].lower()
-        id = request.form['id']
-
-        table_mapping = {
-            'pleito': 'Pleito',
-            'candidatura': 'Candidatura',
-            'cargo': 'Cargo',
-            'individuo': 'Individuo',
-            'equipeapoio': 'EquipeApoio',
-            'doadoresf': 'DoacaoPF',
-            'doadoresj': 'DoadorPJ',
-            'processojudicial': 'ProcessoJudicial',
-            'empresa': 'empresa'
-        }
-
-        id_column_mapping = {
-            'pleito': 'Cod_Pleito',
-            'candidatura': 'Cod_Candidatura',
-            'individuo': 'CPF',
-            'cargo': 'Cod_Cargo',
-            'equipeapoio': 'Cod_Equipe',
-            'doadoresf': 'Cod_Nota',
-            'doadoresj': 'Cod_Candidatura',
-            'processojudicial': 'Cod_Processo',
-            'empresa': 'cnpj'
-        }
-
-        table = table_mapping.get(entity)
-        id_column = id_column_mapping.get(entity)
-
-        if table and id_column:
-            if entity == 'individuo' and (len(id) != 14):
-                message = "CPF inválido ou não encontrado!"
-                return render_template('delete.html', message=message)
-            elif entity == 'empresa' and (len(id) != 18):
-                message = "CNPJ inválido ou não encontrado!"
-                return render_template('delete.html', message=message)
-                
-            query = f"DELETE FROM {table} WHERE {id_column} = %s"
-
-            try:
-                conn = get_db_connection()
-                cursor = conn.cursor()
-                cursor.execute(query, (id,))
-                
-                if cursor.rowcount == 0:
-                    message = f"Nenhum registro encontrado para {entity} com ID {id}."
-                else:
-                    conn.commit()
-                    message = f"{entity.capitalize()} com ID {id} removido com sucesso."
-            except Exception as e:
-                conn.rollback()
-                message = f"Erro ao remover {entity}: {e}"
-            finally:
-                cursor.close()
-                conn.close()
-        else:
+        user_id = request.form['id']
+        
+        if not is_valid_entity(entity) or not is_valid_id(entity, user_id):
+            message = get_invalid_message(entity)
+            return render_template('delete.html', message=message)
+        
+        table, id_column = get_table_and_column(entity)
+        if not table or not id_column:
             message = "Entidade ou coluna de ID inválida."
-
+            return render_template('delete.html', message=message)
+        
+        message = delete_from_db(table, id_column, user_id, entity)
         return render_template('delete.html', message=message)
-
+    
     return render_template('delete.html')
 
 @app.route('/inserir', methods=['GET', 'POST'])
@@ -269,7 +224,6 @@ def inserir():
                 if not total_doacoes:  
                     total_doacoes = 0
 
-                # Verificação 1: se o candidato já se candidatou para o mesmo cargo no mesmo ano
                 query_check_same_cargo = """
                     SELECT 1 FROM Candidatura 
                     WHERE Cod_Candidato = %s 
@@ -279,8 +233,7 @@ def inserir():
                 cursor.execute(query_check_same_cargo, (codigo_candidato, ano, codigo_cargo))
                 if cursor.fetchone():
                     raise Exception('Candidato já se candidatou para o mesmo cargo no mesmo ano.')
-
-                # Verificação 2: se o candidato já se candidatou para outro cargo no mesmo ano
+                
                 query_check_other_cargo = """
                     SELECT 1 FROM Candidatura 
                     WHERE Cod_Candidato = %s 

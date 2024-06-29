@@ -258,7 +258,7 @@ BEGIN
         AND Ano = NEW.Ano
         AND Cod_Cargo <> NEW.Cod_Cargo
     ) THEN
-        RAISE EXCEPTION 'O indivíduo % já possui uma candidatura registrada para outro cargo no ano %.', NEW.Cod_Candidato, NEW.Ano;
+        RAISE EXCEPTION 'O candidato % já possui um registro de candidatura para outro cargo no ano %.', NEW.Cod_Candidato, NEW.Ano;
         ELSIF EXISTS (
         SELECT 1
         FROM Candidatura
@@ -266,7 +266,7 @@ BEGIN
         AND Ano = NEW.Ano
         AND Cod_Cargo = NEW.Cod_Cargo
     ) THEN
-        RAISE EXCEPTION 'O indivíduo % já possui uma candidatura registrada para esse cargo no ano %.', NEW.Cod_Candidato, NEW.Ano;
+        RAISE EXCEPTION 'O candidato % já possui um registro de candidatura para esse cargo no ano %.', NEW.Cod_Candidato, NEW.Ano;
     END IF;
     
     RETURN NEW;

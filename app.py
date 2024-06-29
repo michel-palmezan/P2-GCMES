@@ -8,6 +8,9 @@ from misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_an
 app = Flask(__name__, template_folder='./docs')
 load_dotenv()
 
+# Definindo delete.html como uma constante
+DELETE_TEMPLATE = 'delete.html'
+
 def get_db_connection():
     try:
         conn = connect(
@@ -186,17 +189,17 @@ def delete_entity():
         
         if not is_valid_entity(entity) or not is_valid_id(entity, user_id):
             message = get_invalid_message(entity)
-            return render_template('delete.html', message=message)
+            return render_template(DELETE_TEMPLATE, message=message)
         
         table, id_column = get_table_and_column(entity)
         if not table or not id_column:
             message = "Entidade ou coluna de ID inválida."
-            return render_template('delete.html', message=message)
+            return render_template(DELETE_TEMPLATE, message=message)
         
         message = delete_from_db(table, id_column, user_id, entity)
-        return render_template('delete.html', message=message)
+        return render_template(DELETE_TEMPLATE, message=message)
     
-    return render_template('delete.html')
+    return render_template(DELETE_TEMPLATE)
 
 @app.route('/inserir', methods=['GET', 'POST'])
 def inserir():

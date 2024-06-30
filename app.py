@@ -9,12 +9,14 @@ from misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_an
 
 app = Flask(__name__, template_folder='./docs')
 app.debug = False
+app.config['WTF_CSRF_ENABLED'] = False
+csrf = CSRFProtect()
 load_dotenv()
 
-# Definindo delete.html como uma constante
+# Definindo constantes
 DELETE_TEMPLATE = 'delete.html'
 SUCCESS_MESSAGE = "Dados inseridos com sucesso!"
-
+METHODS = ['GET', 'POST']
 
 def get_db_connection():
     try:
@@ -191,7 +193,7 @@ def get_ficha_limpa():
         })
     return render_template('ficha_limpa.html', candidatos=result)
 
-@app.route('/delete',methods=['GET', 'POST'])
+@app.route('/delete',methods=METHODS)
 def delete_entity():
     if request.method == 'POST':
         entity = request.form['entity'].lower()
@@ -211,7 +213,7 @@ def delete_entity():
     
     return render_template(DELETE_TEMPLATE)
 
-@app.route('/inserir', methods=['GET', 'POST'])
+@app.route('/inserir', methods=METHODS)
 def inserir():
     if request.method == 'POST':
         entity = request.form['entity']
@@ -248,7 +250,7 @@ def inserir():
 
     return render_template('inserir.html')
 
-@app.route('/doacoes', methods=['GET', 'POST'])
+@app.route('/doacoes', methods=METHODS)
 def doacoes():
     if request.method == 'POST':
         conn = get_db_connection()
@@ -316,5 +318,6 @@ def doacoes():
     return render_template('doacoes.html')
 
 if __name__ == '__main__':
+    csrf.init_app(app)
     if len(sys.argv) > 1 and sys.argv[1] == 'debug':
         app.run(debug=True)

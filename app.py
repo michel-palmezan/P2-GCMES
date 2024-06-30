@@ -8,6 +8,9 @@ from misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_an
 app = Flask(__name__, template_folder='./docs')
 load_dotenv()
 
+# Definindo delete.html como uma constante
+DELETE_TEMPLATE = 'delete.html'
+
 def get_db_connection():
     try:
         conn = connect(
@@ -21,7 +24,7 @@ def get_db_connection():
     except Error as e:
         print(f"Error connecting to the database: {e}")
         return None
-    
+
 def delete_from_db(table, id_column, entity_id, entity):
     query = f"DELETE FROM {table} WHERE {id_column} = %s"
     try:
@@ -96,6 +99,15 @@ def list_candidaturas():
         order_by = request.args.get('order_by', 'Ano')
         order_dir = request.args.get('order_dir', 'ASC')
 
+        # Whitelist for order_by and order_dir values
+        valid_order_by_columns = ['Ano', 'Nome_Candidato', 'Partido', 'Localidade', 'Total_doacoes']
+        valid_order_dir = ['ASC', 'DESC']
+
+        if order_by not in valid_order_by_columns:
+            order_by = 'Ano'
+        if order_dir not in valid_order_dir:
+            order_dir = 'ASC'
+
         query = """
         SELECT Candidatura.*, Individuo.Nome AS Nome_Candidato, Partido.Nome AS Partido, Cargo.Localidade, Total_doacoes AS totDoacoes
         FROM Candidatura 
@@ -119,6 +131,7 @@ def list_candidaturas():
         if filters:
             query += " WHERE " + " AND ".join(filters)
 
+        # Add the ORDER BY clause with sanitized values
         query += f" ORDER BY {order_by} {order_dir}"
 
         cursor.execute(query, tuple(params))
@@ -129,14 +142,13 @@ def list_candidaturas():
 
         result = []
         for candidatura in candidaturas:
-            print(candidatura)
             result.append({
                 'Cod_Candidatura': candidatura[0],
                 'Cod_Candidato': candidatura[1],
                 'Cod_Cargo': candidatura[2],
                 'Ano': candidatura[4],
                 'Cod_Pleito': candidatura[5],
-                'Cod_Candidatura_Vice': candidatura[6] ,
+                'Cod_Candidatura_Vice': candidatura[6],
                 'Eleito': candidatura[7],
                 'Nome_Candidato': candidatura[9],
                 'Partido': candidatura[3],
@@ -186,17 +198,17 @@ def delete_entity():
         
         if not is_valid_entity(entity) or not is_valid_id(entity, user_id):
             message = get_invalid_message(entity)
-            return render_template('delete.html', message=message)
+            return render_template(DELETE_TEMPLATE, message=message)
         
         table, id_column = get_table_and_column(entity)
         if not table or not id_column:
             message = "Entidade ou coluna de ID inválida."
-            return render_template('delete.html', message=message)
+            return render_template(DELETE_TEMPLATE, message=message)
         
         message = delete_from_db(table, id_column, user_id, entity)
-        return render_template('delete.html', message=message)
+        return render_template(DELETE_TEMPLATE, message=message)
     
-    return render_template('delete.html')
+    return render_template(DELETE_TEMPLATE)
 
 @app.route('/inserir', methods=['GET', 'POST'])
 def inserir():
@@ -226,17 +238,17 @@ def inserir():
             conn.commit()
         except Exception as error:
             conn.rollback()
-            message = f"Houve um problema com os inputs: inputs inválidos!"
-            print(error)
+            message = f"Erro ao inserir dados: {error}"
         finally:
             cursor.close()
             conn.close()
+        
         return render_template('inserir.html', message=message)
+
     return render_template('inserir.html')
 
 @app.route('/doacoes', methods=['GET', 'POST'])
 def doacoes():
-    message = ""
     if request.method == 'POST':
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -304,4 +316,3 @@ def doacoes():
 
 if __name__ == '__main__':
     app.run(debug=True)
-

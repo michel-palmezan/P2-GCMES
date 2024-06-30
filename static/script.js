@@ -45,23 +45,6 @@ function toggleDoadorFields() {
         }
     }
 
-    function toggleDoadorFields() {
-    let tipoDoador = document.getElementById("tipo_doador").value;
-    let cpfField = document.getElementById("cpf_field");
-    let cnpjField = document.getElementById("cnpj_field");
-
-    if (tipoDoador === "Físico") {
-        cpfField.style.display = "block";
-        cnpjField.style.display = "none";
-    } else if (tipoDoador === "Jurídico") {
-        cnpjField.style.display = "block";
-        cpfField.style.display = "none";
-    } else {
-        cpfField.style.display = "none";
-        cnpjField.style.display = "none";
-    }
-}
-
 function formatarCPF(input) {
     let cpf = input.value.replace(/\D/g, '');
 

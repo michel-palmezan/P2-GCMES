@@ -212,7 +212,7 @@ def delete_entity():
         message = delete_from_db(table, id_column, user_id, entity)
         return render_template(DELETE_TEMPLATE, message=message)
     
-    return render_template(DELETE_TEMPLATE, message=SUCCESS_MESSAGE)
+    return render_template(DELETE_TEMPLATE)
 
 @app.route('/inserir', methods=METHODS)
 def inserir():

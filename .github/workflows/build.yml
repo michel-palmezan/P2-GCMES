@@ -14,13 +14,13 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install deps
-        run: pip install python-dotenv psycopg2 flask pytest pytest-cov
+        run: pip install python-dotenv psycopg2 flask pytest pytest-cov Flask-WTF
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
       - name: Install tox and any other packages
-        run: pip install tox python-dotenv psycopg2 flask pytest pytest-cov
+        run: pip install tox python-dotenv psycopg2 flask pytest pytest-cov Flask-WTF
       - name: Run tox
         run: tox -e py
       - name: Sonar Scan

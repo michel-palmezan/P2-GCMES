@@ -1,4 +1,4 @@
-## DISCIPLINA
+## DISCIPLINA USP(SCC0535)
 
 Nome: Gerência de Configuração, Manutenção e Evolução de Software(GCMES)
 Docente: Prof° Dr. Lina Garcés

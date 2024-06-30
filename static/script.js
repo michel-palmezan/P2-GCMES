@@ -20,8 +20,8 @@ function toggleDoadorFields() {
             cpfField.style.display = "block";
             cnpjField.style.display = "none";
         } else if (tipoDoador == "Jurídico") {
-            cpfField.style.display = "block";
-            cnpjField.style.display = "none";
+            cpfField.style.display = "none";
+            cnpjField.style.display = "block";
         } else {
             cpfField.style.display = "none";
             cnpjField.style.display = "none";

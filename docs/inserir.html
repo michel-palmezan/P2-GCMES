@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt" xml:lang="pt">
 <head>
     <title>Inserir Dados</title>
     <link rel="stylesheet" href="/static/styles.css">
@@ -167,32 +167,6 @@
         <p>{{ message }}</p>
         {% endif %}
     </div>
-    <script async>
-            document.getElementById('entity').addEventListener('change', function() {
-            var entityIdInput = document.getElementById('cpf');
-            var entityIdInput2 = document.getElementById('cnpj');
-            var entityIdInput3 = document.getElementById('cod_individuo');
-            entityIdInput.oninput = null;
-            if (this.value === 'individuo') {
-                // Formatar CPF
-                entityIdInput.placeholder = "Digite o CPF (XXX.XXX.XXX-XX)";
-                entityIdInput.oninput = function() {
-                    formatarCPF(this);
-                };
-            } else if (this.value === 'empresa') {
-                // Formatar CNPJ
-                entityIdInput2.placeholder = "Digite o CNPJ (XX.XXX.XXX/XXXX-XX)";
-                entityIdInput2.oninput = function() {
-                    formatarCNPJ(this);
-                };
-            }else if (this.value === 'candidatura') {
-                entityIdInput3.placeholder = "Digite o CPF (XXX.XXX.XXX-XX)";
-                entityIdInput3.oninput = function() {
-                    formatarCPF(this);
-                };
-            }
-        });
-    </script>
     <footer>
         <p id="footer">&copy; 2024 Sistema Eleitoral. Todos os direitos reservados.</p>
     </footer>

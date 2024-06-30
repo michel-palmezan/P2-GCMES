@@ -1,11 +1,13 @@
 from psycopg2 import Error, connect
 from flask import Flask, request, jsonify, render_template
+from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 from os import getenv
 from misc import handle_candidatura_insertion, handle_cargo_insertion, handle_empresa_insertion, handle_equipeapoio_insertion, handle_individuo_insertion, handle_partido_insertion, handle_pleito_insertion, handle_processojudicial_insertion, handle_programa_partido_insertion
 from misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_and_column
 
 app = Flask(__name__, template_folder='./docs')
+csrf = CSRFProtect(app)
 load_dotenv()
 
 # Definindo delete.html como uma constante
@@ -24,7 +26,7 @@ def get_db_connection():
     except Error as e:
         print(f"Error connecting to the database: {e}")
         return None
-    
+
 def delete_from_db(table, id_column, entity_id, entity):
     query = f"DELETE FROM {table} WHERE {id_column} = %s"
     try:
@@ -52,7 +54,7 @@ message = "Dados inseridos com sucesso!"
 def index():
     return render_template('index.html')
 
-@app.route('/candidaturas/eleitos', methods=['GET'])
+@app.route('/candidaturas/eleitos', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def get_eleitos():
     query = """
     SELECT Candidatura.*, Individuo.Nome AS Nome, Partido.Nome AS Partido, Cargo.Localidade, Vice.Cod_Candidato AS Vice_Candidato
@@ -87,7 +89,7 @@ def get_eleitos():
         })
     return render_template('eleitos.html', candidaturas=result)
 
-@app.route('/candidaturas', methods=['GET'])
+@app.route('/candidaturas', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def list_candidaturas():
     try:
         conn = get_db_connection()
@@ -98,6 +100,15 @@ def list_candidaturas():
         cargo = request.args.get('cargo')
         order_by = request.args.get('order_by', 'Ano')
         order_dir = request.args.get('order_dir', 'ASC')
+
+        # Whitelist for order_by and order_dir values
+        valid_order_by_columns = ['Ano', 'Nome_Candidato', 'Partido', 'Localidade', 'Total_doacoes']
+        valid_order_dir = ['ASC', 'DESC']
+
+        if order_by not in valid_order_by_columns:
+            order_by = 'Ano'
+        if order_dir not in valid_order_dir:
+            order_dir = 'ASC'
 
         query = """
         SELECT Candidatura.*, Individuo.Nome AS Nome_Candidato, Partido.Nome AS Partido, Cargo.Localidade, Total_doacoes AS totDoacoes
@@ -122,6 +133,7 @@ def list_candidaturas():
         if filters:
             query += " WHERE " + " AND ".join(filters)
 
+        # Add the ORDER BY clause with sanitized values
         query += f" ORDER BY {order_by} {order_dir}"
 
         cursor.execute(query, tuple(params))
@@ -132,14 +144,13 @@ def list_candidaturas():
 
         result = []
         for candidatura in candidaturas:
-            print(candidatura)
             result.append({
                 'Cod_Candidatura': candidatura[0],
                 'Cod_Candidato': candidatura[1],
                 'Cod_Cargo': candidatura[2],
                 'Ano': candidatura[4],
                 'Cod_Pleito': candidatura[5],
-                'Cod_Candidatura_Vice': candidatura[6] ,
+                'Cod_Candidatura_Vice': candidatura[6],
                 'Eleito': candidatura[7],
                 'Nome_Candidato': candidatura[9],
                 'Partido': candidatura[3],
@@ -153,7 +164,7 @@ def list_candidaturas():
         return jsonify({'error': str(e)}), 500
 
 # Rota para obter candidatos com ficha limpa
-@app.route('/candidatos/ficha-limpa', methods=['GET'])
+@app.route('/candidatos/ficha-limpa', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def get_ficha_limpa():
     query = "SELECT * FROM Individuo WHERE Ficha_Limpa = TRUE"
     
@@ -181,7 +192,7 @@ def get_ficha_limpa():
         })
     return render_template('ficha_limpa.html', candidatos=result)
 
-@app.route('/delete', methods=['GET', 'POST'])
+@app.route('/delete',methods=['GET', 'POST', 'PUT', 'DELETE'])
 def delete_entity():
     if request.method == 'POST':
         entity = request.form['entity'].lower()
@@ -201,7 +212,7 @@ def delete_entity():
     
     return render_template(DELETE_TEMPLATE)
 
-@app.route('/inserir', methods=['GET', 'POST'])
+@app.route('/inserir', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def inserir():
     if request.method == 'POST':
         entity = request.form['entity']
@@ -229,17 +240,17 @@ def inserir():
             conn.commit()
         except Exception as error:
             conn.rollback()
-            message = f"Houve um problema com os inputs: inputs inválidos!"
-            print(error)
+            message = f"Erro ao inserir dados: {error}"
         finally:
             cursor.close()
             conn.close()
+        
         return render_template('inserir.html', message=message)
+
     return render_template('inserir.html')
 
-@app.route('/doacoes', methods=['GET', 'POST'])
+@app.route('/doacoes', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def doacoes():
-    message = ""
     if request.method == 'POST':
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -294,7 +305,7 @@ def doacoes():
         
         except Exception as e:
             conn.rollback()
-            message = f"Erro ao registrar doação"
+            message = "Erro ao registrar doação"
             print(e)
         
         finally:
@@ -306,5 +317,5 @@ def doacoes():
     return render_template('doacoes.html')
 
 if __name__ == '__main__':
+    csrf.init_app(app)
     app.run(debug=True)
-

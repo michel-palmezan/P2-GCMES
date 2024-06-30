@@ -4,7 +4,8 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from app import app, delete_from_db
-from misc import *
+from misc import handle_candidatura_insertion, handle_cargo_insertion, handle_empresa_insertion, handle_equipeapoio_insertion, handle_individuo_insertion, handle_partido_insertion, handle_pleito_insertion, handle_processojudicial_insertion, handle_programa_partido_insertion
+from misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_and_column, other_candidatura_exists, candidatura_exists
 
 @pytest.fixture
 def client():

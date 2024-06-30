@@ -210,9 +210,9 @@ def delete_entity():
             return render_template(DELETE_TEMPLATE, message=message)
         
         message = delete_from_db(table, id_column, user_id, entity)
-        return render_template(DELETE_TEMPLATE, message=SUCCESS_MESSAGE)
+        return render_template(DELETE_TEMPLATE, message=message)
     
-    return render_template(DELETE_TEMPLATE)
+    return render_template(DELETE_TEMPLATE, message=SUCCESS_MESSAGE)
 
 @app.route('/inserir', methods=METHODS)
 def inserir():
@@ -247,9 +247,9 @@ def inserir():
             cursor.close()
             conn.close()
         
-        return render_template('inserir.html', message=SUCCESS_MESSAGE)
+        return render_template('inserir.html', message=message)
 
-    return render_template('inserir.html')
+    return render_template('inserir.html', message=SUCCESS_MESSAGE)
 
 @app.route('/doacoes', methods=METHODS)
 def doacoes():
@@ -314,11 +314,10 @@ def doacoes():
             cursor.close()
             conn.close()
     
-        return render_template('doacoes.html', message=SUCCESS_MESSAGE)
+        return render_template('doacoes.html', message=message)
 
-    return render_template('doacoes.html')
+    return render_template('doacoes.html', message=SUCCESS_MESSAGE)
 
 if __name__ == '__main__':
     csrf.init_app(app)
-    if len(sys.argv) > 1 and sys.argv[1] == 'debug':
-        app.run(debug=True)
+    app.run(debug=getenv("DEBUG"))

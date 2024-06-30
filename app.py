@@ -8,10 +8,11 @@ from misc import handle_candidatura_insertion, handle_cargo_insertion, handle_em
 from misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_and_column
 
 app = Flask(__name__, template_folder='./docs')
-app.debug = False
-app.config['WTF_CSRF_ENABLED'] = False
-csrf = CSRFProtect()
 load_dotenv()
+
+app.debug = getenv("DEBUG")
+app.config['WTF_CSRF_ENABLED'] = getenv("WTF_CSRF_ENABLED")
+csrf = CSRFProtect()
 
 # Definindo constantes
 DELETE_TEMPLATE = 'delete.html'

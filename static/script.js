@@ -16,10 +16,7 @@ function toggleDoadorFields() {
         let cpfField = document.getElementById("cpf_field");
         let cnpjField = document.getElementById("cnpj_field");
 
-        if (tipoDoador == "Físico") {
-            cpfField.style.display = "block";
-            cnpjField.style.display = "none";
-        } else if (tipoDoador == "Jurídico") {
+        if (tipoDoador == "Físico" || tipoDoador == "Jurídico") {
             cpfField.style.display = "block";
             cnpjField.style.display = "none";
         } else {

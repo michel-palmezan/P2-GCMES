@@ -192,7 +192,7 @@ def get_ficha_limpa():
         })
     return render_template('ficha_limpa.html', candidatos=result)
 
-@app.route('/delete',methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/delete',methods=['GET', 'POST'])
 def delete_entity():
     if request.method == 'POST':
         entity = request.form['entity'].lower()
@@ -212,7 +212,7 @@ def delete_entity():
     
     return render_template(DELETE_TEMPLATE)
 
-@app.route('/inserir', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/inserir', methods=['GET', 'POST'])
 def inserir():
     if request.method == 'POST':
         entity = request.form['entity']
@@ -249,7 +249,7 @@ def inserir():
 
     return render_template('inserir.html')
 
-@app.route('/doacoes', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/doacoes', methods=['GET', 'POST'])
 def doacoes():
     if request.method == 'POST':
         conn = get_db_connection()

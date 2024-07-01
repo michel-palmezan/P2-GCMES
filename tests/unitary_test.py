@@ -202,4 +202,3 @@ def test_handle_candidatura_insertion():
 
     handle_candidatura_insertion(cursor_mock, form_data)
     cursor_mock.execute.assert_called_once()
-    

@@ -137,8 +137,7 @@ def list_candidaturas():
         if filters:
             query += " WHERE " + " AND ".join(filters)
 
-        # Add the ORDER BY clause with sanitized values
-        query += f" ORDER BY {order_by} {order_dir}"
+        query += " ORDER BY " + order_by + " " + order_dir
 
         cursor.execute(query, tuple(params))
         candidaturas = cursor.fetchall()

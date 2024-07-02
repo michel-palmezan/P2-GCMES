@@ -115,7 +115,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_atualizar_ficha_limpa
+CREATE TRIGGER trg_atualizar_ficha_limp
 AFTER UPDATE ON ProcessoJudicial
 FOR EACH ROW
 WHEN (NEW.Julgado IS TRUE AND NEW.Procedente IS TRUE)

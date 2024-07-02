@@ -131,14 +131,14 @@ def test_handle_processojudicial_insertion_execute_called():
     cursor_mock.execute.assert_called_once()
 
 def test_handle_partido_insertion_execute_called():
-        cursor_mock = MagicMock()
-        form_mock = {
-            'cod_partido': '123',
-            'nome': 'Partido X',
-            'cod_programa': '456'
-        }
-        handle_partido_insertion(cursor_mock, form_mock)
-        cursor_mock.execute.assert_called_once()
+    cursor_mock = MagicMock()
+    form_mock = {
+        'cod_partido': '123',
+        'nome': 'Partido X',
+        'cod_programa': '456'
+    }
+    handle_partido_insertion(cursor_mock, form_mock)
+    cursor_mock.execute.assert_called_once()
 
 def test_candidatura_exists_execute_called():
     cursor_mock = MagicMock()

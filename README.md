@@ -5,12 +5,11 @@ Docente: Prof° Dr. Lina Garcés
 
 ## INTEGRANTES DO TRABALHO
 
-```
-- 11781587 -Guilherme Henrique Galdini Tosi
-- 10876264 - Michel Palmezan Ribeiro de Grande
-- 9850332 - Fellipe Tripovichy Andrade
-- 12623950 - Silmar Pereira da Silva Junior
-```
+=======
+Guilherme Henrique Galdini Tosi 11781587
+10876264 - Michel Palmezan Ribeiro de Grande
+9850332 - Fellipe Tripovichy Andrade
+12623950 - Silmar Pereira da Silva Junior 
 
 ## INSTALÇÃO DE DEPENDÊNCIAS
 

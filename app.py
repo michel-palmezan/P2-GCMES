@@ -17,6 +17,7 @@ load_dotenv()
 DELETE_TEMPLATE = 'delete.html'
 METHODS = ['GET', 'POST']
 
+
 def get_db_connection():
     try:
         conn = connect(
@@ -137,7 +138,8 @@ def list_candidaturas():
         if filters:
             query += " WHERE " + " AND ".join(filters)
 
-        query += " ORDER BY " + order_by + " " + order_dir
+        # Add the ORDER BY clause with sanitized values
+        query += f" ORDER BY {order_by} {order_dir}"
 
         cursor.execute(query, tuple(params))
         candidaturas = cursor.fetchall()
@@ -195,7 +197,7 @@ def get_ficha_limpa():
         })
     return render_template('ficha_limpa.html', candidatos=result)
 
-@app.route('/delete',methods=METHODS)
+@app.route('/delete',methods=['GET', 'POST'])
 def delete_entity():
     if request.method == 'POST':
         entity = request.form['entity'].lower()
@@ -321,4 +323,5 @@ def doacoes():
 
 if __name__ == '__main__':
     csrf.init_app(app)
-    app.run(debug=getenv("DEBUG"))
+    app.run(debug=True)
+

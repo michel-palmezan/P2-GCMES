@@ -5,6 +5,7 @@ Docente: Prof° Dr. Lina Garcés
 
 ## INTEGRANTES DO TRABALHO
 
+=======
 Guilherme Henrique Galdini Tosi 11781587
 10876264 - Michel Palmezan Ribeiro de Grande
 9850332 - Fellipe Tripovichy Andrade

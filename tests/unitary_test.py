@@ -17,16 +17,16 @@ def test_default_page(client):
     assert response.status_code == 404
 
 def test_is_valid_entity():
-    assert is_valid_entity('pleito') == True
-    assert is_valid_entity('invalid_entity') == False
+    assert is_valid_entity('pleito') is True
+    assert is_valid_entity('invalid_entity') is False
 
 def test_is_valid_entity_invalid_length():
-    assert is_valid_entity('empresa') == True
-    assert is_valid_id('empresa', '123456789012345678987897988') == False
+    assert is_valid_entity('empresa') is True
+    assert is_valid_id('empresa', '123456789012345678987897988') is False
 
 def test_is_valid_id():
-    assert is_valid_id('individuo', '12345678901234') == True
-    assert is_valid_id('individuo', '12345') == False
+    assert is_valid_id('individuo', '12345678901234') is True
+    assert is_valid_id('individuo', '12345') is False
 
 def test_get_table_and_column():
     assert get_table_and_column('candidatura') == ('Candidatura', 'Cod_Candidatura')
@@ -131,14 +131,14 @@ def test_handle_processojudicial_insertion_execute_called():
     cursor_mock.execute.assert_called_once()
 
 def test_handle_partido_insertion_execute_called():
-        cursor_mock = MagicMock()
-        form_mock = {
-            'cod_partido': '123',
-            'nome': 'Partido X',
-            'cod_programa': '456'
-        }
-        handle_partido_insertion(cursor_mock, form_mock)
-        cursor_mock.execute.assert_called_once()
+    cursor_mock = MagicMock()
+    form_mock = {
+        'cod_partido': '123',
+        'nome': 'Partido X',
+        'cod_programa': '456'
+    }
+    handle_partido_insertion(cursor_mock, form_mock)
+    cursor_mock.execute.assert_called_once()
 
 def test_candidatura_exists_execute_called():
     cursor_mock = MagicMock()
@@ -202,3 +202,4 @@ def test_handle_candidatura_insertion():
 
     handle_candidatura_insertion(cursor_mock, form_data)
     cursor_mock.execute.assert_called_once()
+    

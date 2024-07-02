@@ -3,19 +3,18 @@ from flask import Flask, request, jsonify, render_template
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 from os import getenv
-from misc import handle_candidatura_insertion, handle_cargo_insertion, handle_empresa_insertion, handle_equipeapoio_insertion, handle_individuo_insertion, handle_partido_insertion, handle_pleito_insertion, handle_processojudicial_insertion, handle_programa_partido_insertion
+from misc import handle_candidatura_insertion, handle_cargo_insertion, handle_empresa_insertion
+from misc import handle_equipeapoio_insertion, handle_individuo_insertion, handle_partido_insertion
+from misc import handle_pleito_insertion, handle_processojudicial_insertion, handle_programa_partido_insertion
 from misc import is_valid_entity, is_valid_id, get_invalid_message, get_table_and_column
 
 app = Flask(__name__, template_folder='./docs')
-load_dotenv()
-
-app.debug = getenv("DEBUG")
 app.config['WTF_CSRF_ENABLED'] = getenv("WTF_CSRF_ENABLED")
-csrf = CSRFProtect()
+csrf = CSRFProtect(app)
+load_dotenv()
 
 # Definindo constantes
 DELETE_TEMPLATE = 'delete.html'
-SUCCESS_MESSAGE = "Dados inseridos com sucesso!"
 METHODS = ['GET', 'POST']
 
 def get_db_connection():
@@ -44,13 +43,15 @@ def delete_from_db(table, id_column, entity_id, entity):
         else:
             conn.commit()
             message = f"{entity.capitalize()} com ID {entity_id} removido com sucesso."
-    except Exception as e:
+    except:
         conn.rollback()
-        message = f"Erro ao remover {entity}: {e}"
+        message = f"Erro ao remover {entity}"
     finally:
         cursor.close()
         conn.close()
     return message
+
+message = "Dados inseridos com sucesso!"
 
 # Rota principal
 @app.route('/')
@@ -104,6 +105,7 @@ def list_candidaturas():
         order_by = request.args.get('order_by', 'Ano')
         order_dir = request.args.get('order_dir', 'ASC')
 
+        # Whitelist for order_by and order_dir values
         valid_order_by_columns = ['Ano', 'Nome_Candidato', 'Partido', 'Localidade', 'Total_doacoes']
         valid_order_dir = ['ASC', 'DESC']
 
@@ -135,6 +137,7 @@ def list_candidaturas():
         if filters:
             query += " WHERE " + " AND ".join(filters)
 
+        # Add the ORDER BY clause with sanitized values
         query += f" ORDER BY {order_by} {order_dir}"
 
         cursor.execute(query, tuple(params))
@@ -248,7 +251,7 @@ def inserir():
         
         return render_template('inserir.html', message=message)
 
-    return render_template('inserir.html', message=SUCCESS_MESSAGE)
+    return render_template('inserir.html')
 
 @app.route('/doacoes', methods=METHODS)
 def doacoes():
@@ -315,7 +318,7 @@ def doacoes():
     
         return render_template('doacoes.html', message=message)
 
-    return render_template('doacoes.html', message=SUCCESS_MESSAGE)
+    return render_template('doacoes.html')
 
 if __name__ == '__main__':
     csrf.init_app(app)
